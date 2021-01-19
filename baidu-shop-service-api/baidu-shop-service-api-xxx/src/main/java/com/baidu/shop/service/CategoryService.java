@@ -5,8 +5,7 @@ import com.baidu.shop.entity.CategoryEntity;
 import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +17,14 @@ public interface CategoryService {
     Result<List<CategoryEntity>> getCategoryByid(Integer pid);
 
     @ApiOperation(value = "通过id删除商品分类")
-    @DeleteMapping(value = "/category/del")
+    @DeleteMapping(value = "category/del")
     Result<JsonObject> deleteCategory(Integer id);
+
+    @ApiOperation(value = "修改分类")
+    @PutMapping(value = "category/edit")
+    Result<JsonObject> editCategory(@RequestBody CategoryEntity categoryEntity);
+
+    @ApiOperation(value = "新增分类")
+    @PostMapping(value = "category/add")
+    Result<JsonObject> addCategory(@RequestBody CategoryEntity categoryEntity);
 }
