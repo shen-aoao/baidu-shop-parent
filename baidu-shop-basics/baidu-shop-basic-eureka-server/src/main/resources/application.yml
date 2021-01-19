@@ -2,8 +2,7 @@ server:
   port: 8761
 spring:
   application:
-    name: eureka-serve
-
+    name: eureka-server
 eureka:
   client:
     # eureka服务url,值为map集合默认key为defaultZone
