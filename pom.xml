@@ -11,6 +11,7 @@
         <module>baidu-shop-basics</module>
         <module>baidu-shop-commoms</module>
         <module>baidu-shop-service</module>
+        <module>baidu-shop-service-api</module>
     </modules>
 
     <!--父级项目不需要打包所有packging的类型为pom-->
