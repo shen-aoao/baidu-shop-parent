@@ -1,7 +1,9 @@
 package com.baidu.shop.entity;
 
 import io.swagger.models.auth.In;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Table;
 
@@ -12,8 +14,10 @@ import javax.persistence.Table;
  * @Date 2021/1/21
  * @Version V1.0
  **/
-@Table(name="tb_category_brand")
 @Data
+@Table(name="tb_category_brand")
+@NoArgsConstructor
+@AllArgsConstructor
 public class CategoryBrandEntity {
 
     private Integer categoryId;

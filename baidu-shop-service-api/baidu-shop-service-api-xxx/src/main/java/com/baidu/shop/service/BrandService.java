@@ -22,4 +22,7 @@ public interface BrandService {
     @PostMapping(value = "brand/addBrandInfo")
     public Result<JSONObject> addBrandInfo(@Validated({BaiduOperation.Add.class})@RequestBody BrandDTO brandDTO);
 
+    @ApiOperation(value = "修改品牌信息")
+    @PutMapping(value = "brand/addBrandInfo")
+    Result<JSONObject> editBrand(@Validated({BaiduOperation.Update.class})@RequestBody BrandDTO brandDTO);
 }

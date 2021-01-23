@@ -20,7 +20,9 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName BrandServiceImpl
@@ -81,6 +83,41 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
             categoryBrandEntity.setCategoryId(Integer.valueOf(categories));
 
             categoryBrandMapper.insert(categoryBrandEntity);
+        }
+        return this.setResultSuccess();
+    }
+
+    @Transactional
+    @Override
+    public Result<JSONObject> editBrand(BrandDTO brandDTO) {
+        BrandEntity brandEntity = BaiduBeanUtil.copyProperties(brandDTO,BrandEntity.class);
+        brandEntity.setLetter(PinyinUtil.getUpperCase(String.valueOf(brandEntity.getName().toCharArray()[0]),false).toCharArray()[0]);
+        brandMapper.updateByPrimaryKeySelective(brandEntity);
+
+        Example example = new Example(CategoryBrandEntity.class);
+        example.createCriteria().andEqualTo("brand",brandEntity.getId());
+
+        categoryBrandMapper.deleteByExample(example);
+
+        String categories = brandDTO.getCategories();
+        if(StringUtils.isEmpty(brandDTO.getCategories())) return this.setResultError("");
+
+        //判断分类集合字符串中是否包含,
+        if(categories.contains(",")){
+
+            categoryBrandMapper.insertList(
+                    Arrays.asList(categories.split(","))
+                            .stream()
+                            .map(categoryIdStr -> new CategoryBrandEntity(Integer.valueOf(categoryIdStr)
+                                    ,brandEntity.getId()))
+                            .collect(Collectors.toList())
+            );
+        }else{//普通单个新增
+            CategoryBrandEntity categoryBrandEntity = new CategoryBrandEntity();
+            categoryBrandEntity.setBrandId(brandEntity.getId());
+            categoryBrandEntity.setCategoryId(Integer.valueOf(categories));
+
+            categoryBrandMapper.insertSelective(categoryBrandEntity);
         }
         return this.setResultSuccess();
     }

@@ -35,6 +35,12 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
         return this.setResultSuccess(list);
     }
 
+    @Override
+    public Result<List<CategoryEntity>> getCategoryByBrandId(Integer brandId) {
+        List<CategoryEntity> byBrandId = categoryMapper.getCategoryByBrandId(brandId);
+        return this.setResultSuccess(byBrandId);
+    }
+
 
     @Transactional
     @Override
