@@ -41,6 +41,7 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
     private CategoryBrandMapper categoryBrandMapper;
 
 
+    @Transactional
     @Override
     public Result<PageInfo<BrandEntity>> getBrandInfo(BrandDTO brandDTO) {
         PageHelper.startPage(brandDTO.getPage(),brandDTO.getRows());
@@ -65,18 +66,16 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
 
         String categories = brandDTO.getCategories();
         if(StringUtils.isEmpty(brandDTO.getCategories())) return this.setResultError("");
-        List<CategoryBrandEntity> categoryBrandEntities = new ArrayList<>();
 
-        if(categories.contains(",")){
-            String[] categoryArr = categories.split(",");
-
-            for(String s : categoryArr){
-                CategoryBrandEntity categoryBrandEntity = new CategoryBrandEntity();
-                categoryBrandEntity.setBrandId(brandEntity.getId());
-                categoryBrandEntity.setCategoryId(Integer.valueOf(s));
-                categoryBrandEntities.add(categoryBrandEntity);
-            }
-            categoryBrandMapper.insertList(categoryBrandEntities);
+        //判断分类集合串中是否包含
+        if(categories.contains(",")) {
+            categoryBrandMapper.insertList(
+                    Arrays.asList(categories.split(","))
+                            .stream()
+                            .map(categoryIdStr -> new CategoryBrandEntity(Integer.valueOf(categoryIdStr)
+                                    ,brandEntity.getId()))
+                            .collect(Collectors.toList())
+            );
         }else{
             CategoryBrandEntity categoryBrandEntity = new CategoryBrandEntity();
             categoryBrandEntity.setBrandId(brandEntity.getId());
@@ -120,5 +119,19 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
             categoryBrandMapper.insertSelective(categoryBrandEntity);
         }
         return this.setResultSuccess();
+    }
+
+    @Transactional
+    @Override
+    public Result<JSONObject> deleteBrand(Integer id) {
+        brandMapper.deleteByPrimaryKey(id);
+        this.deleteCategoryBrandByBrandId(id);
+        return this.setResultSuccess();
+    }
+
+    private void deleteCategoryBrandByBrandId(Integer id){
+        Example example = new Example(CategoryBrandEntity.class);
+        example.createCriteria().andEqualTo("brandId",id);
+        categoryBrandMapper.deleteByExample(example);
     }
 }

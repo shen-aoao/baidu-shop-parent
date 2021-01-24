@@ -25,4 +25,8 @@ public interface BrandService {
     @ApiOperation(value = "修改品牌信息")
     @PutMapping(value = "brand/addBrandInfo")
     Result<JSONObject> editBrand(@Validated({BaiduOperation.Update.class})@RequestBody BrandDTO brandDTO);
+
+    @ApiOperation(value = "通过id删除品牌信息")
+    @DeleteMapping(value = "brand/delete")
+    Result<JSONObject> deleteBrand(Integer id);
 }
